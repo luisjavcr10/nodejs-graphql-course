@@ -1,22 +1,25 @@
 const {ApolloServer} = require('@apollo/server');
 const { ApolloServerPluginLandingPageLocalDefault } = require('@apollo/server/plugin/landingPage/default');
 const { expressMiddleware } = require('@apollo/server/express4')
+const {loadFiles} = require('@graphql-tools/load-files')
 
-const typeDefs = `
-  type Query {
-    hello: String
-  }
-`;
 
 const resolvers = {
   Query: {
-    hello: () => 'world',
+    getUser: () => {
+      return {
+        name: 'Juan',
+        age: 12,
+        email: 'juan@gmail',
+        password: 'juan123456',
+      };
+    },
   },
 };
 
 const useGraphql = async (app) => {
   const server = new ApolloServer({
-    typeDefs,
+    typeDefs: await loadFiles('./src/**/*.graphql'),
     resolvers,
     playground:true,
     plugins: [ApolloServerPluginLandingPageLocalDefault],
